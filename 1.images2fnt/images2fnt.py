@@ -13,7 +13,7 @@ def joint_image(out_image_name,image_dict):
 	for key in image_dict.keys():
 		str_args=str_args+" "+key
 
-	commond="convert%s +append %s/%s" %(str_args,output_path_name,out_image_name)
+	commond="convert%s +append %s" %(str_args,out_image_name)
 	# print commond
 	os.system(commond)
 
@@ -30,7 +30,7 @@ def make_fnt_file(pre_str,image_dict):
 	max_width=0
 	fnt_define_item=list()
 	for key in image_dict.keys():
-		print "Image:",key," Key:",image_dict[key]
+		print "\t+",key+"\t","Key:",chr(int(image_dict[key]))
 
 		image_size=utility.image_size_at_path(key)
 		fnt_define_item_data=dict()
@@ -62,8 +62,20 @@ def make_fnt_file(pre_str,image_dict):
 	fnt_define["file"]=image_name
 	fnt_define["count"]=len(image_dict)
 
+	image_name=output_path_name+"/"+image_name
+
 	utility.create_fnt_file(fnt_name, fnt_define)
+	print "make:",fnt_name,"done!"
 	joint_image(image_name,image_dict)
+	print "make:",image_name,"done!"
+	print"*************************************************************"
+
+
+def check_and_make(str_pre,convert_list):
+	if len(convert_list)>=4 :
+		print"*************************************************************"
+		print str_pre+":"
+		make_fnt_file(str_pre,convert_list)
 
 
 def main():
@@ -88,15 +100,16 @@ def main():
 		temp_str_pre=file_name[0:underline_pos]
 		# print(temp_str_pre)
 		if str_pre != "" and str_pre != temp_str_pre:
-			if len(convert_list)>=4 :
-				make_fnt_file(str_pre,convert_list)
+			check_and_make(str_pre,convert_list)
 			convert_list=dict()
 
 		str_pre=temp_str_pre
 		convert_list[file_name]=ascii_code
 
-	if len(convert_list)>=4 :
-		make_fnt_file(str_pre,convert_list)
+
+	
+	check_and_make(str_pre,convert_list)
+
 
 
 

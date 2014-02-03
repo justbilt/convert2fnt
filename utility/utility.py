@@ -49,12 +49,9 @@ chars count=%s
 def image_size_at_path(path):
 	command="identify -format \"%%W-%%H\" %s" % path
 	line = os.popen(command).readlines()
-	print line[0]
 	arg=line[0].split('-')
 	size=[]
 	size.append(int(arg[0]))
 	size.append(int(arg[1]))
-	print size
-	# im = Image.open(path)
-	# return im.size
+	# print "\tImage ",path,"size is:",size
 	return size
