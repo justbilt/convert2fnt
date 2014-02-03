@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
-import os
+import os,sys
+sys.path.append("../utility")
 import utility
+
+output_path_name="output"
+
 
 G_ITEMKEY={"textureFilename":"string","itemWidth":"integer","itemHeight":"integer","firstChar":"integer"}
 
@@ -90,11 +94,18 @@ def write_fnt_file(name,info):
 	fnt_define["file"]=info["textureFilename"]
 	fnt_define["count"]=nCount
 
-	utility.create_fnt_file(name, fnt_define)
+
+	fnt_path_name=output_path_name+"/"+name
+
+	utility.create_fnt_file(fnt_path_name, fnt_define)
 
 # 将plist文件转化为.fnt文件
 def main():
 	file_list=os.listdir(os.getcwd())
+
+	if not os.path.exists(output_path_name):
+		os.makedirs(output_path_name)
+
 	for file_name in file_list:
 		# 判断目标是否是plist文件
 		if os.path.isfile(file_name) and file_name.find(".plist")!=-1:
