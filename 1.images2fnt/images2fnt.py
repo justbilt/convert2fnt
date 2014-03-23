@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import os,sys
+from PIL import Image
+
 # import utility
 sys.path.append("../utility")
 import utility
@@ -9,13 +11,27 @@ output_path_name="output"
 
 
 def joint_image(out_image_name,image_dict):
+	outW=0
+	outH=0
 	str_args=""
 	for key in image_dict.keys():
-		str_args=str_args+" "+key
+		size=utility.image_size_at_path(key)
+		outW+=size[0]
+		outH=max(size[1],outH)
 
-	commond="convert%s +append %s" %(str_args,out_image_name)
-	# print commond
-	os.system(commond)
+	print "out image size %dx%d" %(outW,outH)
+
+	toImage = Image.new('RGBA', (outW, outH))
+
+	x=0
+	for key in image_dict.keys():
+		fromImage=Image.open(key)
+		toImage.paste(fromImage,( x, 0))
+		print "\t %s offset %d" %(key,x)
+		x+=fromImage.size[0]
+
+	toImage.save(out_image_name)
+
 
 
 def make_fnt_file(pre_str,image_dict):

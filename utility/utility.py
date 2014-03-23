@@ -1,6 +1,8 @@
 #!C:/Python27
 # Filename: utility.py
 import os
+from PIL import Image
+
 
 """
 -define
@@ -47,11 +49,6 @@ chars count=%s
 
 
 def image_size_at_path(path):
-	command="identify -format \"%%w-%%h\" %s" % path
-	line = os.popen(command).readlines()
-	arg=line[0].split('-')
-	size=[]
-	size.append(int(arg[0]))
-	size.append(int(arg[1]))
-	# print "\tImage ",path,"size is:",size
-	return size
+	im=Image.open(path)
+	# print "\tImage ",path,"size is:",im.size
+	return im.size
