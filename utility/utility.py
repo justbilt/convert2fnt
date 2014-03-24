@@ -1,6 +1,5 @@
 #!C:/Python27
 # Filename: utility.py
-import os
 from PIL import Image
 
 
