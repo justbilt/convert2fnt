@@ -1,0 +1,1 @@
+pyinstaller ../1.images2fnt/images2fnt.py -F --distpath . -p ../utility
