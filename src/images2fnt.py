@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-import os,sys
+import os
 from PIL import Image
 
 # import utility
-sys.path.append("../utility")
 import utility
 
 
@@ -13,7 +12,6 @@ output_path_name="output"
 def joint_image(out_image_name,image_dict):
 	outW=0
 	outH=0
-	str_args=""
 	for key in image_dict.keys():
 		size=utility.image_size_at_path(key)
 		outW+=size[0]
@@ -125,9 +123,6 @@ def main():
 
 	
 	check_and_make(str_pre,convert_list)
-
-
-
 
 
 
