@@ -43,6 +43,7 @@ fighting_header_shuzi_109.png 	#m
 
 ### 二.项目
 工程已开源到github上,点击[这里][4]查看,项目采用Python编写,主要依赖了这几个库:
+
 1. Pillow
 2. Pyinstaller
 
