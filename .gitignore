@@ -35,3 +35,4 @@ nosetests.xml
 .project
 .pydevproject
 /proj.sublime/*.sublime-workspace
+/build/*.spec
