@@ -92,6 +92,8 @@ def check_and_make(str_pre,convert_list):
 		make_fnt_file(str_pre,convert_list)
 
 
+def convert(params)
+
 def main():
 	file_list=os.listdir(os.getcwd())
 
@@ -104,7 +106,7 @@ def main():
 	for file_name in file_list:
 		if not os.path.isfile(file_name) or file_name.find(".png") == -1:
 			continue
-		
+
 		underline_pos=file_name.rfind('_')
 		if underline_pos == -1:
 			continue
@@ -121,7 +123,7 @@ def main():
 		convert_list[file_name]=ascii_code
 
 
-	
+
 	check_and_make(str_pre,convert_list)
 
 
