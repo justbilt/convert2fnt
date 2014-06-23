@@ -31,12 +31,52 @@ def joint_image(out_image_name,image_dict):
 	toImage.save(out_image_name)
 
 
+# params["root"]
+# params["input"]
+# params["output-path"]
+# params["output-name"]
+# params["images"]
+def convert(params):
+	# check image counts
+	if len(params["images"]) <= 2:
+		print "error: less images..."
+		return
 
-def make_fnt_file(pre_str,image_dict):
-	# print "make_fnt_file:","\n".join(image_dict)
+	# check output path
+	if params["output-path"] != "." and not os.path.exists(params["output-path"]):
+		os.makedirs(params["output-path"])
 
-	fnt_name=output_path_name+"/"+pre_str+".fnt"
-	image_name=pre_str+".png"
+	image_dict,prefix = split_images(params["images"])
+
+	# check output name
+	if params["output-name"] == "":
+		params["output-name"] = prefix
+	elif params["output-name"].find('.fnt'):
+		params["output-name"] = params["output-name"].replace('.fnt')
+
+
+	do_convert(image_dict,params["output-path"],params["output-name"])
+
+
+def split_images(images_list):
+	image_dict = dict()
+	prefix = ""
+	for image_name in images_list:
+		tmp_prefix = image_name[0:image_name.rfind('_')]
+
+		if prefix == "":
+			prefix = tmp_prefix
+		elif prefix != tmp_prefix:
+			print "error: invalide prefix : ",tmp_prefix
+
+		str_ext = image_name[image_name.rfind('_')+1:image_name.rfind('.')]
+		image_dict[image_name]=str_ext
+
+	return image_dict,prefix
+
+def do_convert(image_dict,output_path,output_name):
+	fnt_name=output_path+"/"+output_name+".fnt"
+	image_name=output_name+".png"
 	fnt_define=dict()
 	index=0
 	xOffset=0
@@ -76,56 +116,21 @@ def make_fnt_file(pre_str,image_dict):
 	fnt_define["file"]=image_name
 	fnt_define["count"]=len(image_dict)
 
-	image_name=output_path_name+"/"+image_name
+	image_name=output_path+"/"+output_name+".png"
 
+	print "make:",fnt_name
 	utility.create_fnt_file(fnt_name, fnt_define)
 	print "make:",fnt_name,"done!"
+
+	print "make:",image_name
 	joint_image(image_name,image_dict)
 	print "make:",image_name,"done!"
 	print"*************************************************************"
 
 
-def check_and_make(str_pre,convert_list):
-	if len(convert_list)>=4 :
-		print"*************************************************************"
-		print str_pre+":"
-		make_fnt_file(str_pre,convert_list)
-
-
-def convert(params)
 
 def main():
-	file_list=os.listdir(os.getcwd())
-
-	if not os.path.exists(output_path_name):
-		os.makedirs(output_path_name)
-
-
-	convert_list=dict()
-	str_pre=""
-	for file_name in file_list:
-		if not os.path.isfile(file_name) or file_name.find(".png") == -1:
-			continue
-
-		underline_pos=file_name.rfind('_')
-		if underline_pos == -1:
-			continue
-		ascii_code=file_name[underline_pos+1:file_name.rfind(".")]
-
-		# print(file_name)
-		temp_str_pre=file_name[0:underline_pos]
-		# print(temp_str_pre)
-		if str_pre != "" and str_pre != temp_str_pre:
-			check_and_make(str_pre,convert_list)
-			convert_list=dict()
-
-		str_pre=temp_str_pre
-		convert_list[file_name]=ascii_code
-
-
-
-	check_and_make(str_pre,convert_list)
-
+	print "..."
 
 
 if __name__ == '__main__':

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
+import glob
 
 VERSION = "0.1.0"
 
 
-def help():
+def __help():
     print """
 convert2fnt - %s
 
@@ -16,29 +17,36 @@ input:
     <xxx.plist>     convert a plist file to fnt file.
     <images>        support wildcard character(xxx_*.png), this image must have similar name,
                     convert this image to a sprite sheet, and create a fnt file .
-    # <folder>        try find all file that could be convert and then convert them.
-
+                    warning: wildcard would need escape,eg "xxx_\*.png"
 ouput:
     <ouput-path/ouput-name> output file to 'ouput-path' and named 'ouput-name', default is 'output/<input-name>.fnt'
 
 samples:
     1. c2f sample_*.png
+        # you will get 'sample.png' and 'sample.fnt' in subdir 'output'
     2. c2f sample.plist out/sample.fnt
+        # you will get 'sample.png' and 'sample.fnt' in subdir 'out'
 
 
 """ %(VERSION)
 
 
-def plist2fnt(params):
+def images2fnt(params):
     import images2fnt
+
+    print params["input"]
+    if params["input"].find('*') != -1:
+        params["images"] = glob.glob(params["input"])
+        print params["images"]
+
     images2fnt.convert(params)
 
-def images2fnt(params):
+def plist2fnt(params):
     print "images2fnt..."
 
 def main():
     if len(sys.argv) < 2:
-        help()
+        __help()
         return 0
 
     params = dict()
@@ -52,7 +60,7 @@ def main():
             params["output-path"] = output[0:index]
             params["output-name"] = output[index+1:]
         else:
-            params["output-path"] = ""
+            params["output-path"] = "."
             params["output-name"] = output
     except IndexError, e:
         params["output-path"] = "output"
@@ -62,14 +70,6 @@ def main():
         plist2fnt(params)
     elif params["input"].find(".png") != -1 or sys.argv[2].find(".jpg") != -1:
         images2fnt(params)
-    # else:
-    #     fodler_path = cd + "/" +sys.argv[2]
-    #     if os.path.ispath(fodler_path):
-    #         folder2fnt()
-    #     else:
-    #         print "invalide argv :", sys.argv[2]
-    #         return 0
-
 
 
 
