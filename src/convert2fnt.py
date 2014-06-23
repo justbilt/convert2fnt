@@ -34,15 +34,14 @@ samples:
 def images2fnt(params):
     import images2fnt
 
-    print params["input"]
     if params["input"].find('*') != -1:
         params["images"] = glob.glob(params["input"])
-        print params["images"]
 
     images2fnt.convert(params)
 
 def plist2fnt(params):
-    print "images2fnt..."
+    import plist2fnt
+
 
 def main():
     if len(sys.argv) < 2:

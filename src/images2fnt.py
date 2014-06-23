@@ -25,7 +25,7 @@ def joint_image(out_image_name,image_dict):
 	for key in image_dict.keys():
 		fromImage=Image.open(key)
 		toImage.paste(fromImage,( x, 0))
-		print "\t %s offset %d" %(key,x)
+		# print "\t %s offset %d" %(key,x)
 		x+=fromImage.size[0]
 
 	toImage.save(out_image_name)
@@ -52,7 +52,7 @@ def convert(params):
 	if params["output-name"] == "":
 		params["output-name"] = prefix
 	elif params["output-name"].find('.fnt'):
-		params["output-name"] = params["output-name"].replace('.fnt')
+		params["output-name"] = params["output-name"].replace('.fnt','')
 
 
 	do_convert(image_dict,params["output-path"],params["output-name"])
@@ -75,6 +75,13 @@ def split_images(images_list):
 	return image_dict,prefix
 
 def do_convert(image_dict,output_path,output_name):
+	print "*************************************************************"
+	print "image_dict :", image_dict
+	print "output_path:", output_path
+	print "output_name:", output_name
+
+
+
 	fnt_name=output_path+"/"+output_name+".fnt"
 	image_name=output_name+".png"
 	fnt_define=dict()
@@ -84,7 +91,7 @@ def do_convert(image_dict,output_path,output_name):
 	max_width=0
 	fnt_define_item=list()
 	for key in image_dict.keys():
-		print "\t+",key+"\t","Key:",chr(int(image_dict[key]))
+		# print "\t+",key+"\t","Key:",chr(int(image_dict[key]))
 
 		image_size=utility.image_size_at_path(key)
 		fnt_define_item_data=dict()
@@ -126,8 +133,6 @@ def do_convert(image_dict,output_path,output_name):
 	joint_image(image_name,image_dict)
 	print "make:",image_name,"done!"
 	print"*************************************************************"
-
-
 
 def main():
 	print "..."
