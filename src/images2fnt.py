@@ -135,7 +135,7 @@ def do_convert(image_dict,output_path,output_name):
 	print"*************************************************************"
 
 def main():
-	print "..."
+	print 'please run ./convert2fnt.py .'
 
 
 if __name__ == '__main__':

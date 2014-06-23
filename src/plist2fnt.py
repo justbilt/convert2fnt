@@ -2,6 +2,7 @@
 import os,sys
 sys.path.append("../utility")
 import utility
+import shutil
 
 output_path_name="output"
 
@@ -26,7 +27,7 @@ def getKeyFromLine(line,mask):
 	real_mask_1 = "<%s>" % mask
 	real_mask_2 = "</%s>" % mask
 
-	
+
 	temp_line=formatline(line)
 	temp_line=temp_line.replace(real_mask_1,"").replace(real_mask_2,"").strip().lstrip().rstrip('\r')
 	# print "templine= ",temp_line
@@ -55,16 +56,20 @@ def read_info_from_file(name):
 	return plist_info
 
 
-def write_fnt_file(name,info):
+def write_fnt_file(output_path,output_name,plist_info):
+	print "*************************************************************"
+	print "plist_info :", plist_info
+	print "output_path:", output_path
+	print "output_name:", output_name
 
-	image_size=utility.image_size_at_path(info["textureFilename"])
+	image_size=utility.image_size_at_path(plist_info["textureFilename"])
 
-	# print "\tImage  %s ,width=%d ,height= %d" % (info["textureFilename"],image_size[0],image_size[1])
+	# print "\tImage  %s ,width=%d ,height= %d" % (plist_info["textureFilename"],image_size[0],image_size[1])
 
-	nCount=image_size[0]/int(info["itemWidth"])
-	nFirstID=int(info["firstChar"])
-	nCharWidth=int(info["itemWidth"])
-	nCharHeight=int(info["itemHeight"])
+	nCount=image_size[0]/int(plist_info["itemWidth"])
+	nFirstID=int(plist_info["firstChar"])
+	nCharWidth=int(plist_info["itemWidth"])
+	nCharHeight=int(plist_info["itemHeight"])
 	fnt_define=dict()
 	fnt_define_item=list()
 
@@ -83,7 +88,7 @@ def write_fnt_file(name,info):
 		fnt_define_item_data["letter"]=chr(index+nFirstID)
 
 		fnt_define_item.append(fnt_define_item_data)
-	
+
 
 	fnt_define["data"]=fnt_define_item
 	fnt_define["size"]=str(nCharWidth)
@@ -91,39 +96,51 @@ def write_fnt_file(name,info):
 	fnt_define["base"]=str(nCharWidth)
 	fnt_define["scaleW"]=str(image_size[0])
 	fnt_define["scaleH"]=str(image_size[1])
-	fnt_define["file"]=info["textureFilename"]
+	fnt_define["file"]=output_name+".png"
 	fnt_define["count"]=nCount
 
 
-	fnt_path_name=output_path_name+"/"+name
+	fnt_name = output_path+"/"+output_name
+	print "make:",fnt_name
+	utility.create_fnt_file(fnt_name, fnt_define)
+	print "make:",fnt_name,"done!"
 
-	utility.create_fnt_file(fnt_path_name, fnt_define)
+	image_name=output_path+"/"+output_name+".png"
+	print "make:",image_name
+	shutil.copyfile(plist_info["textureFilename"],image_name)
+	print "make:",image_name,"done!"
+	print"*************************************************************"
+
+
+# params["root"]
+# params["input"]
+# params["output-path"]
+# params["output-name"]
+# params["images"]
+def convert(params):
+	# check inout file
+	if not os.path.isfile(params["input"]) or params["input"].find(".plist") == -1:
+		print "error: file not find :", params["input"]
+		return
+
+	if params["output-name"] == "":
+		params["output-name"] = params["input"].replace('.plist','')
+	elif params["output-name"].find('.fnt'):
+		params["output-name"] = params["output-name"].replace('.fnt','')
+
+	# check output path
+	if params["output-path"] != "." and not os.path.exists(params["output-path"]):
+		os.makedirs(params["output-path"])
+
+	# 从plist文件中获取信息
+	plist_info=read_info_from_file(params["input"])
+
+	write_fnt_file(params["output-path"],params["output-name"],plist_info)
+
 
 # 将plist文件转化为.fnt文件
 def main():
-	file_list=os.listdir(os.getcwd())
-
-	if not os.path.exists(output_path_name):
-		os.makedirs(output_path_name)
-
-	for file_name in file_list:
-		# 判断目标是否是plist文件
-		if os.path.isfile(file_name) and file_name.find(".plist")!=-1:
-			print "\n\tFile: ",file_name
-
-			# 从plist文件中获取信息
-			plist_info=read_info_from_file(file_name)
-
-			# 打印信息
-			for k in plist_info:
-				print "\tInfo  ",k , "=",plist_info[k]
-
-			# 转化为fnt文件
-			fnt_name=file_name.replace(".plist",".fnt")
-			write_fnt_file(fnt_name,plist_info)
-
-	print "\n\tSuccessed!"
-
+	print 'please run ./convert2fnt.py .'
 
 
 if __name__ == '__main__':

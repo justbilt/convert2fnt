@@ -42,6 +42,8 @@ def images2fnt(params):
 def plist2fnt(params):
     import plist2fnt
 
+    plist2fnt.convert(params)
+
 
 def main():
     if len(sys.argv) < 2:
