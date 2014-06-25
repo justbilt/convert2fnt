@@ -1,1 +1,0 @@
-pyinstaller ../src/images2fnt.py -F --distpath ../bin/mac
