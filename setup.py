@@ -11,6 +11,7 @@ setup(
     url = "https://github.com/justbilt/convert2fnt",
     download_url = "https://github.com/justbilt/convert2fnt",
     keywords = ["images2fnt", "plist2fnt", "convert2fnt", "utilities"],
+    install_requires=["Pillow>=2.4.0"],
     classifiers = [
         "Development Status :: 4 - Beta",
         "Environment :: Console",
