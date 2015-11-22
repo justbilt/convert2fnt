@@ -1,78 +1,125 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
-import glob
 
-VERSION = "0.1.0"
+from fnt_helper import generate
+
+from PyQt5.QtCore import QDate, QSize, Qt
+from PyQt5.QtWidgets import (QDesktopWidget, QPushButton, QWidget, QLineEdit, QApplication, QVBoxLayout, QTableWidget, QTableWidgetItem, QFileDialog)
+from PyQt5.QtGui import (QColor, QImage, QPixmap)
+
+class Convert2Fnt(QWidget):
+
+	def __init__(self):
+		super(Convert2Fnt, self).__init__()
+		
+		self.setAcceptDrops(True)
+
+		self.image_config = []
+		self.initUI()
+	
+	def append_items(self, item_data_list):
+		for data in item_data_list:
+			pathname = data["pathname"]
+			path,name = os.path.split(pathname)
+			character = ""
+			if "character" in data:
+				character = data["character"]
+
+			count = self.table.rowCount()
+			self.table.insertRow(count)
+			# thumbnail
+			img = QImage()
+			img.load(pathname)
+			thumbnail_item = QTableWidgetItem()
+			thumbnail_item.setTextAlignment(Qt.AlignCenter);
+			thumbnail_item.setData(Qt.DecorationRole, QPixmap.fromImage(img));
+			self.table.setItem(count, 0, thumbnail_item)
+			# name
+			name_item = QTableWidgetItem(name)
+			name_item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+			self.table.setItem(count, 1, name_item)
+			# character
+			self.table.setItem(count, 2, QTableWidgetItem(character))
+
+			self.image_config.append({
+				"image":pathname,
+				"character":character,    
+			})
+
+		self.table.resizeColumnToContents(0)		
+
+	def dragEnterEvent(self, e):
+		if e.mimeData().hasUrls():
+			e.accept()
+		else:
+			e.ignore() 
+
+	def dropEvent(self, e):
+		if e.mimeData().hasUrls():
+			url_text_list = []
+			for url in e.mimeData().urls():
+				url_text_list.append((url.path(),url.fileName()))
+
+			self.append_with_pathlist(url_text_list)
+
+	def append_with_pathlist(self, path_list):
+		item_data_list = []
+		for i,(pathname,name) in enumerate(path_list):
+			character = ""
+			if os.path.isfile(pathname):
+				underline_pos = name.rfind('_')
+				if underline_pos != -1:
+					try:
+						character = chr(int(name[underline_pos+1:name.rfind(".")]))
+					except ValueError:
+						pass
+
+				item_data_list.append({
+					"pathname":pathname,
+					"character":character,
+				})
+		self.append_items(item_data_list)
+
+	def on_click_generate(self):
+		for row in range(0, self.table.rowCount()):
+			self.image_config[row]["character"] = self.table.item(row, self.table.columnCount()-1).text()
+
+		fname = QFileDialog.getSaveFileName(self)
+		if fname[0]:
+			path,name = os.path.split(fname[0])
+			save_name,ext = os.path.splitext(name)
+			generate(path, save_name, self.image_config)
 
 
-def __help():
-    print """
-convert2fnt - %s
+	def initUI(self):
+		button = QPushButton("Generate", self)
+		button.clicked.connect(self.on_click_generate)
 
-usage:
-    c2f <input> [ouput]
+		self.table = QTableWidget(0, 3)
+		self.table.setHorizontalHeaderLabels(["Preview","Item", "Character"])
+		self.table.verticalHeader().setVisible(False)
+		self.table.horizontalHeader().setStretchLastSection(True)		
 
-input:
-    <xxx.plist>     convert a plist file to fnt file.
-    <images>        support wildcard character(xxx_*.png), this image must have similar name,
-                    convert this image to a sprite sheet, and create a fnt file .
-                    warning: wildcard would need escape,eg "xxx_\*.png"
-ouput:
-    <ouput-path/ouput-name> output file to 'ouput-path' and named 'ouput-name', default is 'output/<input-name>.fnt'
+		layout = QVBoxLayout()
+		layout.addWidget(self.table)
+		layout.addWidget(button)
 
-samples:
-    1. c2f sample_*.png
-        # you will get 'sample.png' and 'sample.fnt' in subdir 'output'
-    2. c2f sample.plist out/sample.fnt
-        # you will get 'sample.png' and 'sample.fnt' in subdir 'out'
+		self.setLayout(layout)
+
+		self.setWindowTitle('Convert2Fnt')
+		self.resize(300, 300)
+		self.center()
 
 
-""" %(VERSION)
-
-
-def images2fnt(params):
-    import images2fnt
-
-    if params["input"].find('*') != -1:
-        params["images"] = glob.glob(params["input"])
-
-    images2fnt.convert(params)
-
-def plist2fnt(params):
-    import plist2fnt
-
-    plist2fnt.convert(params)
-
-
-def main():
-    if len(sys.argv) < 2:
-        __help()
-        return 0
-
-    params = dict()
-    params["root"] = os.getcwd()
-    params["input"] = sys.argv[1]
-
-    try:
-        output = sys.argv[2]
-        index = output.rfind("/")
-        if index != -1:
-            params["output-path"] = output[0:index]
-            params["output-name"] = output[index+1:]
-        else:
-            params["output-path"] = "."
-            params["output-name"] = output
-    except IndexError, e:
-        params["output-path"] = "output"
-        params["output-name"] = ""
-
-    if params["input"].find(".plist") != -1:
-        plist2fnt(params)
-    elif params["input"].find(".png") != -1 or sys.argv[2].find(".jpg") != -1:
-        images2fnt(params)
-
-
+	def center(self):
+		qr = self.frameGeometry()
+		cp = QDesktopWidget().availableGeometry().center()
+		qr.moveCenter(cp)
+		self.move(qr.topLeft())
 
 if __name__ == '__main__':
-    main()
+	app = QApplication(sys.argv)
+	ex = Convert2Fnt()
+	ex.show()
+	app.exec_()
