@@ -23,28 +23,40 @@ class Convert2Fnt(QWidget):
 			pathname = data["pathname"]
 			path,name = os.path.split(pathname)
 			character = ""
+			img = QImage()
+			img.load(pathname)
+			rect = None
+			if "rect" in data:
+				rect = data["rect"]
+			else:
+				rect = (0,0,img.width(),img.height())
+
 			if "character" in data:
 				character = data["character"]
 
 			count = self.table.rowCount()
 			self.table.insertRow(count)
 			# thumbnail
-			img = QImage()
-			img.load(pathname)
 			thumbnail_item = QTableWidgetItem()
 			thumbnail_item.setTextAlignment(Qt.AlignCenter);
+			thumbnail_item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
 			thumbnail_item.setData(Qt.DecorationRole, QPixmap.fromImage(img));
 			self.table.setItem(count, 0, thumbnail_item)
 			# name
 			name_item = QTableWidgetItem(name)
 			name_item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
 			self.table.setItem(count, 1, name_item)
+			# rect
+			rect_item = QTableWidgetItem("{0},{1},{2},{3}".format(*rect))
+			rect_item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+			self.table.setItem(count, 2, rect_item)
 			# character
-			self.table.setItem(count, 2, QTableWidgetItem(character))
+			self.table.setItem(count, 3, QTableWidgetItem(character))
 
 			self.image_config.append({
 				"image":pathname,
-				"character":character,    
+				"character":character,
+				"rect":rect
 			})
 
 		self.table.resizeColumnToContents(0)		
@@ -96,8 +108,8 @@ class Convert2Fnt(QWidget):
 		button = QPushButton("Generate", self)
 		button.clicked.connect(self.on_click_generate)
 
-		self.table = QTableWidget(0, 3)
-		self.table.setHorizontalHeaderLabels(["Preview","Item", "Character"])
+		self.table = QTableWidget(0, 4)
+		self.table.setHorizontalHeaderLabels(["Preview","Item", "Rect", "Character"])
 		self.table.verticalHeader().setVisible(False)
 		self.table.horizontalHeader().setStretchLastSection(True)		
 
@@ -108,7 +120,7 @@ class Convert2Fnt(QWidget):
 		self.setLayout(layout)
 
 		self.setWindowTitle('Convert2Fnt')
-		self.resize(300, 300)
+		self.resize(450, 300)
 		self.center()
 
 

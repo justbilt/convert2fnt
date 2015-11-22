@@ -1,31 +1,32 @@
 # -*- coding: utf-8 -*-
 
-from PIL import Image
+from PyQt5.QtGui import (QImage, QPainter)
+from PyQt5.QtCore import (QPoint, QRect, Qt)
 
 def joint_image(out_image_name,image_dict):
 	outW=0
 	outH=0
 	for config in image_dict:
-		size=image_size_at_path(config["image"])
+		size=(config["rect"][2],config["rect"][3])
 		outW+=size[0]
 		outH=max(size[1],outH)
 
-	print "out image size %dx%d" %(outW,outH)
-
-	toImage = Image.new('RGBA', (outW, outH))
-
-	x=0
+	toImage = QImage(outW, outH, QImage.Format_ARGB32)
+	painter = QPainter(toImage)
+	painter.setCompositionMode(QPainter.CompositionMode_Source)
+	painter.fillRect(toImage.rect(), Qt.transparent)
+	painter.setCompositionMode(QPainter.CompositionMode_SourceOver)
+	offset_x=0
 	for config in image_dict:
-		fromImage=Image.open(config["image"])
-		toImage.paste(fromImage,( x, 0))
-		print "\t %s offset %d" %(config["image"],x)
-		x+=fromImage.size[0]
+		x,y,w,h = config["rect"]
+		fromImage = QImage(config["image"])
+		painter.drawImage(QPoint(offset_x,0), fromImage, QRect(x,y,w,h))
+		offset_x += w
 
+	painter.end()
 	toImage.save(out_image_name)
 
 def generate(path,name,image_dict):
-	print path,name,image_dict
-
 	fnt_name        = path+"/"+name+".fnt"
 	image_name      = name+".png"
 	fnt_define      = dict()
@@ -36,7 +37,7 @@ def generate(path,name,image_dict):
 	fnt_define_item = list()
 
 	for config in image_dict:
-		image_size                       = image_size_at_path(config["image"])
+		image_size                       = (config["rect"][2],config["rect"][3])
 		fnt_define_item_data             = dict()
 		fnt_define_item_data["id"]       = ord(config["character"])
 		fnt_define_item_data["x"]        = str(xOffset)
@@ -69,10 +70,7 @@ def generate(path,name,image_dict):
 	image_name=path+"/"+image_name
 
 	create_fnt_file(fnt_name, fnt_define)
-	print "make:",fnt_name,"done!"
 	joint_image(image_name,image_dict)
-	print "make:",image_name,"done!"
-	print"*************************************************************"
 
 """
 -define
@@ -120,5 +118,4 @@ chars count=%s
 
 def image_size_at_path(path):
 	im=Image.open(path)
-	# print "\tImage ",path,"size is:",im.size
 	return im.size
