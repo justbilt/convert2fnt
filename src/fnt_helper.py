@@ -1,3 +1,4 @@
+# /usr/local/bin/python3
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtGui import (QImage, QPainter)
@@ -106,12 +107,12 @@ page id=0 file="%s"
 chars count=%s
 """ % (fnt_define["size"],fnt_define["lineHeight"],fnt_define["base"],fnt_define["scaleW"],fnt_define["scaleH"],fnt_define["file"],fnt_define["count"])
 
-	write_file.write(head_msg.encode("UTF-8"))
+	write_file.write(head_msg)
 
 	for i in range(0,int(fnt_define["count"])):
 		data=fnt_define["data"][i]
 		line="char id=%s x=%s y=%s width=%s height=%s xoffset=%s yoffset=%s xadvance=%s page=%s chnl=%s letter=\"%s\"\n" %(data["id"],data["x"],data["y"],data["width"],data["height"],data["xoffset"],data["yoffset"],data["xadvance"],data["page"],data["chnl"],data["letter"])
-		write_file.write(line.encode("UTF-8"))
+		write_file.write(line)
 
 	write_file.close()
 
