@@ -7,7 +7,7 @@ import os
 from fnt_helper import generate
 
 from PyQt5.QtCore import QDate, QSize, Qt
-from PyQt5.QtWidgets import (QDesktopWidget, QPushButton, QWidget, QLineEdit, QApplication, QVBoxLayout, QTableWidget, QTableWidgetItem, QFileDialog)
+from PyQt5.QtWidgets import (QDesktopWidget, QPushButton, QWidget, QLineEdit, QApplication, QVBoxLayout, QTableWidget, QTableWidgetItem, QFileDialog, QMessageBox)
 from PyQt5.QtGui import (QColor, QImage, QPixmap)
 
 class Convert2Fnt(QWidget):
@@ -65,6 +65,18 @@ class Convert2Fnt(QWidget):
 
 	def dragEnterEvent(self, e):
 		if e.mimeData().hasUrls():
+			label_atlas_file = None
+			urls = e.mimeData().urls()
+			for url in urls:
+				pathname,ext = os.path.splitext(url.fileName())
+				if ext == "plist":
+					label_atlas_file = pathname
+
+			if label_atlas_file:
+				if len(urls) > 1:
+					QMessageBox.warning(self, 'warning', "if you want drag atlas file, just drag plist file!!")
+
+
 			e.accept()
 		else:
 			e.ignore() 
@@ -100,6 +112,7 @@ class Convert2Fnt(QWidget):
 			self.image_config[row]["character"] = self.table.item(row, self.table.columnCount()-1).text()
 
 		fname = QFileDialog.getSaveFileName(self)
+		# fname = ["/Users/bilt/Documents/convert2fnt/bin/test"]
 		if fname[0]:
 			path,name = os.path.split(fname[0])
 			save_name,ext = os.path.splitext(name)
