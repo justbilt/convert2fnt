@@ -22,4 +22,8 @@ cd ..
 echo "DEPLOYING APPLICATION"
 macdeployqt build/convert2fnt.app
 
+echo "PACKAGE APPLICATION"
+mkdir dist
+appdmg convert2fnt.json dist/convert2fnt.dmg
+
 echo "FINISHED"
