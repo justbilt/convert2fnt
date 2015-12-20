@@ -24,6 +24,8 @@ macdeployqt build/convert2fnt.app
 
 echo "PACKAGE APPLICATION"
 mkdir dist
+cp -r build/convert2fnt.app dist
+rm -rf dist/convert2fnt.dmg
 appdmg convert2fnt.json dist/convert2fnt.dmg
 
 echo "FINISHED"
