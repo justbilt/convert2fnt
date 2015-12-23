@@ -4,7 +4,7 @@ echo "CLEANING BUILD DIR"
 rm -rf build
 
 echo "GENERATING SOURCE CODE"
-pyqtdeploycli --project osxdeploy.pdy --output build build
+pyqtdeploycli --project src/osxdeploy.pdy --output build build
 
 echo "COMPILING convert2fnt"
 cp convert2fnt.icns ./build/
