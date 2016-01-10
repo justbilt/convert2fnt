@@ -10,6 +10,9 @@ from PyQt5.QtCore import QDate, QSize, Qt
 from PyQt5.QtWidgets import (QDesktopWidget, QPushButton, QWidget, QLineEdit, QApplication, QVBoxLayout, QTableWidget, QTableWidgetItem, QFileDialog, QMessageBox)
 from PyQt5.QtGui import (QColor, QImage, QPixmap)
 
+TABLE_HEIGHT = 50
+TABLE_WIDTH = 100
+
 class Convert2Fnt(QWidget):
 
 	def __init__(self):
@@ -42,6 +45,11 @@ class Convert2Fnt(QWidget):
 			thumbnail_item = QTableWidgetItem()
 			thumbnail_item.setTextAlignment(Qt.AlignCenter);
 			thumbnail_item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+			# sacle img to suitsize
+			scale = min(float(TABLE_WIDTH)/img.width(), float(TABLE_HEIGHT)/img.height())
+			if scale < 1:
+				img = img.scaled(img.width()*scale, img.width()*scale, Qt.KeepAspectRatio)				
+
 			thumbnail_item.setData(Qt.DecorationRole, QPixmap.fromImage(img));
 			self.table.setItem(count, 0, thumbnail_item)
 			# name
@@ -60,8 +68,6 @@ class Convert2Fnt(QWidget):
 				"character":character,
 				"rect":rect
 			})
-
-		self.table.resizeColumnToContents(0)		
 
 	def dragEnterEvent(self, e):
 		if e.mimeData().hasUrls():
@@ -127,6 +133,9 @@ class Convert2Fnt(QWidget):
 		self.table.setHorizontalHeaderLabels(["Preview","Item", "Rect", "Character"])
 		self.table.verticalHeader().setVisible(False)
 		self.table.horizontalHeader().setStretchLastSection(True)		
+		# self.table.resizeColumnToContents(0)
+		self.table.verticalHeader().setDefaultSectionSize(TABLE_HEIGHT);
+		self.table.horizontalHeader().setDefaultSectionSize(TABLE_WIDTH);
 
 		layout = QVBoxLayout()
 		layout.addWidget(self.table)
