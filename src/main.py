@@ -7,8 +7,8 @@ import os
 from fnt_helper import generate
 
 from PyQt5.QtCore import QDate, QSize, Qt
-from PyQt5.QtWidgets import (QDesktopWidget, QPushButton, QWidget, QLineEdit, QApplication, QVBoxLayout, QTableWidget, QTableWidgetItem, QFileDialog, QMessageBox)
-from PyQt5.QtGui import (QColor, QImage, QPixmap)
+from PyQt5.QtWidgets import (QDesktopWidget, QPushButton, QWidget, QLineEdit, QApplication, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem, QFileDialog, QMessageBox, QFontDialog)
+from PyQt5.QtGui import (QColor, QImage, QPixmap, QFont)
 
 TABLE_HEIGHT = 50
 TABLE_WIDTH = 100
@@ -113,6 +113,18 @@ class Convert2Fnt(QWidget):
 				})
 		self.append_items(item_data_list)
 
+	
+	def on_click_font(self):
+		font, ok = QFontDialog.getFont(QFont(self.font_family, self.font_size))
+		if ok:
+			self.font_family = font.family()
+			self.font_size = font.pointSize()
+			self.refresh_font_button()
+
+	def refresh_font_button(self):
+		self.button_font.setText("%s,%d" %(self.font_family, self.font_size))
+
+
 	def on_click_generate(self):
 		for row in range(0, self.table.rowCount()):
 			self.image_config[row]["character"] = self.table.item(row, self.table.columnCount()-1).text()
@@ -126,8 +138,6 @@ class Convert2Fnt(QWidget):
 
 
 	def initUI(self):
-		button = QPushButton("Generate", self)
-		button.clicked.connect(self.on_click_generate)
 
 		self.table = QTableWidget(0, 4)
 		self.table.setHorizontalHeaderLabels(["Preview","Item", "Rect", "Character"])
@@ -137,9 +147,22 @@ class Convert2Fnt(QWidget):
 		self.table.verticalHeader().setDefaultSectionSize(TABLE_HEIGHT);
 		self.table.horizontalHeader().setDefaultSectionSize(TABLE_WIDTH);
 
+		self.font_family = "Arial-Black"
+		self.font_size = 12
+		self.button_font = QPushButton("Font", self)
+		self.button_font.clicked.connect(self.on_click_font)
+		self.refresh_font_button()
+
+		hlayout = QHBoxLayout()
+		hlayout.addWidget(self.button_font)
+
 		layout = QVBoxLayout()
 		layout.addWidget(self.table)
-		layout.addWidget(button)
+		layout.addLayout(hlayout)
+
+		button_generate = QPushButton("Generate", self)
+		button_generate.clicked.connect(self.on_click_generate)
+		layout.addWidget(button_generate)
 
 		self.setLayout(layout)
 
