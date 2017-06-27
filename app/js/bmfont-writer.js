@@ -38,11 +38,6 @@ class BMFontWriter {
         var lines = Array()
         var imageName = path.basename(_file, path.extname(_file)) + ".png";
         var imagePathName = path.join(path.dirname(_file), imageName);
-        
-        lines.push(String.format("info face=\"Arial-Black\" size=30 bold=0 italic=0 charset=\"\" unicode=0 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=2,2"));
-        lines.push(String.format("common lineHeight=54 base=30 scaleW=319 scaleH=54 pages=1 packed=0"));
-        lines.push(String.format("page id=0 file=\"{0}\"", imageName));
-        lines.push(String.format("chars count={0}", this._charList.length));
 
         var x = 0;
         var y = 0;
@@ -74,6 +69,15 @@ class BMFontWriter {
             h = Math.max(h, bmp.height);
             w = w + bmp.width;
         }
+
+        lines.splice(
+            0, 
+            0,
+            String.format("info face=\"{0}\" size={1} bold=0 italic=0 charset=\"\" unicode=0 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=2,2", "Arial-Black", 30),
+            String.format("common lineHeight={0} base={2} scaleW={0} scaleH={1} pages=1 packed=0", bmp.height, bmp.width, bmp.height, 30),
+            String.format("page id=0 file=\"{0}\"", imageName),
+            String.format("chars count={0}", this._charList.length)
+        )
 
         fs.writeFileSync(_file, lines.join("\n"));
 
