@@ -4,28 +4,30 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="css/bootstrap.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/app.css" crossorigin="anonymous">
   <!--<title></title>-->
 </head>
 
 <body>
   <div class="container-fluid">
-    <table class="table table-striped table-hover">
+    <table class="table table-striped table-hover vertical-align">
       <thead>
         <tr>
           <th class="text-center">文件名</th>
           <th class="text-center">图片</th>
           <th class="text-center">尺寸</th>
           <th class="text-center">字符</th>
+          <th class="text-center">操作</th>
         </tr>
       </thead>
       <tbody id="item-list">
       </tbody>
     </table>
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-xs-6 col-md-6">
         <button class="btn btn-info btn-block" type="button" , id="btn-font">字体</button>
       </div>
-      <div class="col-md-6">
+      <div class="col-xs-6 col-md-6">
         <button class="btn btn-success btn-block" type="button" , id="btn-save">保存</button>
       </div>
     </div>

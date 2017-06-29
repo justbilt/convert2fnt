@@ -3,6 +3,9 @@ const nativeImage = require('electron').nativeImage;
 const remote = require("electron").remote;
 const BMFontWriter = require("./js/bmfont-writer").BMFontWriter;
 var Jimp = require("jimp");
+var SystemFonts = require('system-font-families').default;
+
+const systemFonts = new SystemFonts();
 
 var fntItemArray = Array();
 var table = document.getElementById("item-list");
@@ -26,6 +29,12 @@ document.getElementById("btn-save").addEventListener("click", function(event){
   });
 })
 
+document.getElementById("btn-font").addEventListener("click", function(event){
+  const fonts = systemFonts.getFontsSync();
+
+  console.log(fonts);
+})
+
 if (!String.format) {
   String.format = function(format) {
     var args = Array.prototype.slice.call(arguments, 1);
@@ -36,6 +45,13 @@ if (!String.format) {
       ;
     });
   };
+}
+
+function onClickTableItemRemove(o){
+  console.log(o);
+  var p=o.parentNode.parentNode;
+  console.log(p);
+         p.parentNode.removeChild(p);
 }
 
 function createTableElement(imagePath){
@@ -70,6 +86,7 @@ function createTableElement(imagePath){
       image.height = lenna.bitmap.height * scacle;
 
     })
+    // var del = document.createElement();
 
 
     var tr = document.createElement('tr');   
@@ -81,16 +98,22 @@ function createTableElement(imagePath){
     var td3 = document.createElement('td');
     td3.className = "text-center";    
     var td4 = document.createElement('td');
+    var td5 = document.createElement('td');
+    td5.className = "text-center";
+
+    td5.innerHTML = "<button class=\"btn btn-xs btn-danger\" type=\"button\", id=\"btn-save\", onclick=\"onClickTableItemRemove(this)\"><span class=\"glyphicon glyphicon-trash\"></span></button>";
 
     td1.appendChild(text1);
     td2.appendChild(image);
     td3.appendChild(text3);
     td4.appendChild(input);
+    // td5.appendChild(del);
 
     tr.appendChild(td1);
     tr.appendChild(td2);
     tr.appendChild(td3);
     tr.appendChild(td4);
+    tr.appendChild(td5);
 
     table.appendChild(tr);
 }
