@@ -9,6 +9,41 @@ const systemFonts = new SystemFonts();
 
 var fntItemArray = Array();
 var table = document.getElementById("item-list");
+var writer = new BMFontWriter();
+var fonts = null;
+var currentFont = {
+  name: "Arial",
+  size: 10
+}
+
+systemFonts.getFonts().then(
+  function(res)
+  {
+    fonts = res;
+  },
+  function(err)
+  {
+
+  }
+);
+
+function FontButtonText()
+{
+  writer.setFont(currentFont.name, currentFont.size);
+
+  var btn = document.getElementById("btn-font");
+  if (btn.value)
+  {
+    btn.value = currentFont.name + "," + currentFont.size;  
+  }
+  else
+  {
+    btn.innerText = currentFont.name + "," + currentFont.size;      
+  }
+}
+
+FontButtonText();
+
 
 // 保存
 document.getElementById("btn-save").addEventListener("click", function(event){
@@ -18,7 +53,6 @@ document.getElementById("btn-save").addEventListener("click", function(event){
       return;
     }
     console.log(filename);
-    var writer = new BMFontWriter();
 
     for (var index = 0; index < fntItemArray.length; index++) {
       var element = fntItemArray[index];
@@ -30,9 +64,10 @@ document.getElementById("btn-save").addEventListener("click", function(event){
 })
 
 document.getElementById("btn-font").addEventListener("click", function(event){
-  const fonts = systemFonts.getFontsSync();
-
-  console.log(fonts);
+  if (!fonts)
+  {
+    return;
+  }
 })
 
 if (!String.format) {
@@ -54,7 +89,7 @@ function onClickTableItemRemove(o){
          p.parentNode.removeChild(p);
 }
 
-function createTableElement(imagePath){
+function createTableElement(imagePath,char){
 
 
     var basename = path.basename(imagePath);
@@ -68,7 +103,14 @@ function createTableElement(imagePath){
 
     var input = document.createElement("input");
     input.className = "form-control";
-    input.value = path.basename(imagePath, path.extname(imagePath));
+    if(char)
+    {
+      input.value = char;
+    }
+    else
+    {
+      input.value = path.basename(imagePath, path.extname(imagePath));      
+    }
 
     var index = fntItemArray.push({input: input}) - 1 ;
 
@@ -135,3 +177,22 @@ document.body.ondrop = (ev) => {
   ev.preventDefault()
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+createTableElement("C:/Users/wangb/Documents/work/easy_slg_client/res/flag/TW.png", 1)
+createTableElement("C:/Users/wangb/Documents/work/easy_slg_client/res/flag/TZ.png", 2)
+createTableElement("C:/Users/wangb/Documents/work/easy_slg_client/res/flag/UA.png", 3)

@@ -23,6 +23,13 @@ var Jimp = require("jimp");
 class BMFontWriter {
     constructor(){
         this._charList = Array();
+        this._font = "Arial"
+        this._fontSize = 10
+    }
+
+    setFont(_name, _size) {
+        this._font = _name;
+        this._size = _size;
     }
 
     appendItem(image, char) {
@@ -57,7 +64,7 @@ class BMFontWriter {
             argumentList.push("height="+bmp.height);
             argumentList.push("xoffset="+0);
             argumentList.push("yoffset="+0);
-            argumentList.push("xadvance="+0);
+            argumentList.push("xadvance="+bmp.width);
             argumentList.push("page="+0);
             argumentList.push("chnl="+0);
             argumentList.push("page="+0);
@@ -73,8 +80,8 @@ class BMFontWriter {
         lines.splice(
             0, 
             0,
-            String.format("info face=\"{0}\" size={1} bold=0 italic=0 charset=\"\" unicode=0 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=2,2", "Arial-Black", 30),
-            String.format("common lineHeight={0} base={2} scaleW={0} scaleH={1} pages=1 packed=0", bmp.height, bmp.width, bmp.height, 30),
+            String.format("info face=\"{0}\" size={1} bold=0 italic=0 charset=\"\" unicode=0 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=2,2", this._font, this._fontSize),
+            String.format("common lineHeight={0} base={2} scaleW={1} scaleH={0} pages=1 packed=0", h, w, this._fontSize),
             String.format("page id=0 file=\"{0}\"", imageName),
             String.format("chars count={0}", this._charList.length)
         )
