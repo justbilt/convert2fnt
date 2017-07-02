@@ -1,4 +1,4 @@
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, Menu} = require('electron')
 const path = require('path')
 const url = require('url')
 
@@ -9,9 +9,9 @@ let win
 function createWindow () {
   console.log("createWindow")
   // 创建浏览器窗口。
-  win = new BrowserWindow({width: 400, height: 600, titleBarStyle: "hiddend-inset"});
+  win = new BrowserWindow({width: 400, height: 670, titleBarStyle: "hiddend-inset"});
 
-  // win.setMenu(null);
+  win.setMenu(null);
 
   // 加载应用的 index.html。
   win.loadURL(url.format({
