@@ -1,21 +1,21 @@
 {
   "name": "convert2fnt",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Convert images to fnt file.",
   "main": "index.js",
   "scripts": {
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "pack": "build --dir",
-    "dist": "build"
+    "postinstall": "electron-builder install-app-deps",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "author": "justbilt",
   "license": "ISC",
   "devDependencies": {
-    "electron-builder": "^18.1.1",
-    "electron-packager": "^8.7.0",
-    "electron-prebuilt": "^1.4.13",
-    "electron": "^1.6.7"
+    "electron-builder": "^19.11.1",
+    "electron-packager": "^8.7.2",
+    "electron": "^1.6.11"
   },
   "dependencies": {
     "jimp": "^0.2.28",
