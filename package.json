@@ -25,7 +25,8 @@
     "asar": false,
     "appId": "com.justbilt.convert2fnt",
     "mac": {
-      "category": "your.app.category.type"
+      "category": "your.app.category.type",
+      "identity": null
     }
   }
 }
