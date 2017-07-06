@@ -3,24 +3,14 @@ const nativeImage = require('electron').nativeImage;
 const remote = require("electron").remote;
 const BMFontWriter = require("./js/bmfont-writer").BMFontWriter;
 const Jimp = require("jimp");
-const SystemFonts = require('system-font-families').default;
-const SystemFontsIns = new SystemFonts();
 
 var fntItemArray = Array();
 var table = document.getElementById("item-list");
-var fonts = null;
+var uid = 0;
 var currentFont = {
   name: "Arial",
   size: 10
 }
-
-SystemFontsIns.getFonts().then(
-  function (res) {
-    fonts = res;
-  },
-  function (err) {
-  }
-);
 
 function refreshFontButtonLabel() {
   var btn = document.getElementById("btn-font");
@@ -33,8 +23,18 @@ function refreshFontButtonLabel() {
 }
 
 function onClickTableItemRemove(o) {
-  var p = o.parentNode.parentNode;
-  p.parentNode.removeChild(p);
+  var id = Number(o.id);
+  for (var index = 0; index < fntItemArray.length; index++) {
+    var element = fntItemArray[index];
+    if(element.uid == id)
+    {
+      fntItemArray.splice(index, 1);
+      var p = o.parentNode.parentNode;
+      p.parentNode.removeChild(p);
+      break;
+    }
+  }  
+
 }
 
 function onClickSaveFnt(event) {
@@ -61,9 +61,6 @@ function onClickSaveFnt(event) {
 }
 
 function onClickChangeFont(event) {
-  if (!fonts) {
-    return;
-  }
 }
 
 if (!String.format) {
@@ -91,7 +88,7 @@ function appendFntItem(imagePath, char) {
   input.className = "form-control input-sm";
   input.value = char;
 
-  var index = fntItemArray.push({ input: input }) - 1;
+  var index = fntItemArray.push({ input: input, uid: uid }) - 1;
 
   Jimp.read(imagePath, function (err, lenna) {
     if (err) { throw err };
@@ -123,7 +120,7 @@ function appendFntItem(imagePath, char) {
   tdList[3].appendChild(input);
 
   tdList[4] = document.createElement('td');
-  tdList[4].innerHTML = "<button class=\"btn btn-xs btn-danger\" type=\"button\", id=\"btn-save\", onclick=\"onClickTableItemRemove(this)\"><span class=\"glyphicon glyphicon-trash\"></span></button>";
+  tdList[4].innerHTML = String.format("<button class=\"btn btn-xs btn-danger\" type=\"button\", id=\"{0}\", onclick=\"onClickTableItemRemove(this)\"><span class=\"glyphicon glyphicon-trash\"></span></button>", uid);
 
   tdList.forEach(function (element) {
     element.className = "text-center";
@@ -131,6 +128,8 @@ function appendFntItem(imagePath, char) {
   }, this);
 
   table.appendChild(tr);
+
+  uid = uid + 1;  
 }
 
 document.ondragover = document.ondrop = (ev) => {
@@ -138,7 +137,6 @@ document.ondragover = document.ondrop = (ev) => {
 }
 
 document.body.ondrop = (ev) => {
-  console.log(ev)
   for (var i = 0; i < ev.dataTransfer.files.length; i++) {
     var filePath = ev.dataTransfer.files[i].path;
     if (path.extname(filePath) == ".png") {
@@ -152,3 +150,5 @@ document.body.ondrop = (ev) => {
 refreshFontButtonLabel();
 document.getElementById("btn-save").addEventListener("click", onClickSaveFnt);
 document.getElementById("btn-font").addEventListener("click", onClickChangeFont);
+
+appendFntItem("C:/Users/wangb/Documents/work/easy_slg_client/res/flag/TZ.png", 2)
