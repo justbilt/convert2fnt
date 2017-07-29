@@ -75,9 +75,21 @@ if (!String.format) {
   };
 }
 
+function calcImageKey(imagePath) {
+    var char = path.basename(imagePath, path.extname(imagePath));
+    var split = char.split("_")
+    if (split.length >= 2) {
+      var temp = Number(split[split.length-1]);
+      if (temp) {
+        char = String.fromCharCode(temp)
+      }
+    }
+    return char
+}
+
 function appendFntItem(imagePath, char) {
   if (!char) {
-    char = path.basename(imagePath, path.extname(imagePath));
+    char = calcImageKey(imagePath);
   }
   var basename = path.basename(imagePath);
 
