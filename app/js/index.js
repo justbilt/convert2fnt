@@ -162,5 +162,3 @@ document.body.ondrop = (ev) => {
 refreshFontButtonLabel();
 document.getElementById("btn-save").addEventListener("click", onClickSaveFnt);
 document.getElementById("btn-font").addEventListener("click", onClickChangeFont);
-
-appendFntItem("C:/Users/wangb/Documents/work/easy_slg_client/res/flag/TZ.png", 2)

@@ -7,11 +7,10 @@ const url = require('url')
 let win
 
 function createWindow () {
-  console.log("createWindow")
   // 创建浏览器窗口。
-  win = new BrowserWindow({width: 400, height: 670, titleBarStyle: "hiddend-inset"});
+  win = new BrowserWindow({width: 400, height: 670, titleBarStyle: "hiddend-inset", title: app.getName()+"@"+app.getVersion()});
 
-  // win.setMenu(null);
+  win.setMenu(null);
 
   // 加载应用的 index.html。
   win.loadURL(url.format({
@@ -21,7 +20,7 @@ function createWindow () {
   }))
 
   // 打开开发者工具。
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   // 当 window 被关闭，这个事件会被触发。
   win.on('closed', () => {
