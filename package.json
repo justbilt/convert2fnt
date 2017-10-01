@@ -1,22 +1,17 @@
 {
-  "name": "convert2fnt",
-  "version": "0.0.1",
-  "description": "Convert images to fnt file.",
-  "main": "index.js",
+  "repository": "justbilt/convert2fnt",
+  "author": "justbilt",
+  "license": "ISC",  
   "scripts": {
-    "start": "electron .",
+    "start": "electron app",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "electron-builder install-app-deps",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
-  "author": "justbilt",
-  "license": "ISC",
   "devDependencies": {
-    "electron-builder": "^19.11.1",
-    "electron": "^1.6.11"
-  },
-  "dependencies": {
+    "electron-builder": "^19.33.0",
+    "electron": "^1.7.8",
     "jimp": "^0.2.28"
   },
   "build": {
@@ -24,7 +19,11 @@
     "appId": "com.justbilt.convert2fnt",
     "mac": {
       "category": "your.app.category.type",
-      "identity": null
+      "identity": null,
+      "target": "zip"
+    },
+    "win": {
+      "target": "zip"
     }
   }
 }

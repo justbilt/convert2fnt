@@ -1,0 +1,11 @@
+{
+  "name": "convert2fnt",
+  "version": "0.0.1",
+  "description": "Convert images to fnt file.",
+  "main": "index.js",
+  "author": "justbilt",
+  "license": "ISC",
+  "dependencies": {
+    "jimp": "^0.2.28"
+  }
+}
