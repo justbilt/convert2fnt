@@ -98,7 +98,8 @@ function appendFntItem(imagePath, char) {
   var text3 = document.createTextNode("");
   var input = document.createElement("input");
   input.className = "form-control input-sm";
-  input.value = char;
+  input.value = char[0];
+  input.maxLength = 1;
 
   var index = fntItemArray.push({ input: input, uid: uid }) - 1;
 
