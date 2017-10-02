@@ -4,31 +4,21 @@ const remote = require("electron").remote;
 const BMFontWriter = require("./js/bmfont-writer").BMFontWriter;
 const Jimp = require("jimp");
 
-var fntItemArray = Array();
-var table = document.getElementById("item-list");
-var uid = 0;
-var currentFont = {
+var ITEM_PARENT = document.getElementById("item-list");
+var FNTITEMARRAY = Array();
+var UID = 0;
+var CURRENTFONT = {
   name: "Arial",
   size: 10
 }
 
-function refreshFontButtonLabel() {
-  var btn = document.getElementById("btn-font");
-  if (btn.value) {
-    btn.value = currentFont.name + "," + currentFont.size;
-  }
-  else {
-    btn.innerText = currentFont.name + "," + currentFont.size;
-  }
-}
-
 function onClickTableItemRemove(o) {
   var id = Number(o.id);
-  for (var index = 0; index < fntItemArray.length; index++) {
-    var element = fntItemArray[index];
+  for (var index = 0; index < FNTITEMARRAY.length; index++) {
+    var element = FNTITEMARRAY[index];
     if(element.uid == id)
     {
-      fntItemArray.splice(index, 1);
+      FNTITEMARRAY.splice(index, 1);
       var p = o.parentNode.parentNode;
       p.parentNode.removeChild(p);
       break;
@@ -49,10 +39,10 @@ function onClickSaveFnt(event) {
 
     var writer = new BMFontWriter();
 
-    writer.setFont(currentFont.name, currentFont.size);
+    writer.setFont(CURRENTFONT.name, CURRENTFONT.size);
     
-    for (var index = 0; index < fntItemArray.length; index++) {
-      var element = fntItemArray[index];
+    for (var index = 0; index < FNTITEMARRAY.length; index++) {
+      var element = FNTITEMARRAY[index];
       writer.appendItem(element.image, element.input.value);
     }
 
@@ -60,7 +50,12 @@ function onClickSaveFnt(event) {
   });
 }
 
-function onClickChangeFont(event) {
+function onClickClear(event) {
+  UID = 0;
+  FNTITEMARRAY = Array();
+  while (ITEM_PARENT.firstChild) {
+    ITEM_PARENT.removeChild(ITEM_PARENT.firstChild);
+  }
 }
 
 if (!String.format) {
@@ -101,11 +96,11 @@ function appendFntItem(imagePath, char) {
   input.value = char[0];
   input.maxLength = 1;
 
-  var index = fntItemArray.push({ input: input, uid: uid }) - 1;
+  var index = FNTITEMARRAY.push({ input: input, uid: UID }) - 1;
 
   Jimp.read(imagePath, function (err, lenna) {
     if (err) { throw err };
-    fntItemArray[index].image = lenna;
+    FNTITEMARRAY[index].image = lenna;
     text3.nodeValue = String.format("{0}x{1}", lenna.bitmap.width, lenna.bitmap.height);
 
     var baseW = 50;
@@ -133,16 +128,16 @@ function appendFntItem(imagePath, char) {
   tdList[3].appendChild(input);
 
   tdList[4] = document.createElement('td');
-  tdList[4].innerHTML = String.format("<button class=\"btn btn-xs btn-danger\" type=\"button\", id=\"{0}\", onclick=\"onClickTableItemRemove(this)\"><span class=\"glyphicon glyphicon-trash\"></span></button>", uid);
+  tdList[4].innerHTML = String.format("<button class=\"btn btn-xs btn-danger\" type=\"button\", id=\"{0}\", onclick=\"onClickTableItemRemove(this)\"><span class=\"glyphicon glyphicon-trash\"></span></button>", UID);
 
   tdList.forEach(function (element) {
     element.className = "text-center";
     tr.appendChild(element);
   }, this);
 
-  table.appendChild(tr);
+  ITEM_PARENT.appendChild(tr);
 
-  uid = uid + 1;  
+  UID = UID + 1;  
 }
 
 document.ondragover = document.ondrop = (ev) => {
@@ -159,7 +154,5 @@ document.body.ondrop = (ev) => {
   ev.preventDefault()
 }
 
-
-refreshFontButtonLabel();
 document.getElementById("btn-save").addEventListener("click", onClickSaveFnt);
-document.getElementById("btn-font").addEventListener("click", onClickChangeFont);
+document.getElementById("btn-clear").addEventListener("click", onClickClear);
