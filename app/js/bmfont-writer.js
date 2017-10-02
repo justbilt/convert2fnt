@@ -32,8 +32,33 @@ class BMFontWriter {
         this._size = _size;
     }
 
-    appendItem(image, char) {
-        this._charList.push({image: image, char:char});
+    appendItem(_image, _char) {
+        this._charList.push({image: _image, char: _char});
+    }
+
+    _appendLine(_config, _image, _charcode, _char) {
+        var line = Array();
+        
+        line.push("char");
+        line.push("id=" + _charcode);
+        line.push("x=" + _config.x);
+        line.push("y=" + _config.y);
+        line.push("width=" + _image.width);
+        line.push("height=" + _image.height);
+        line.push("xoffset=" + 0);
+        line.push("yoffset=" + 0);
+        line.push("xadvance=" + _image.width);
+        line.push("page=" + 0);
+        line.push("chnl=" + 0);
+        line.push("page=" + 0);
+        line.push(String.format("letter=\"{0}\"", _char));
+
+        _config.lines.push(line.join(" "));
+
+        _config.x = _config.x + _image.width;
+        _config.max_h = Math.max(_config.max_h, _image.height);
+        _config.min_w = Math.max(_config.min_w, _image.width);
+        _config.w = _config.w + _image.width;        
     }
 
     save(_file) {
@@ -46,58 +71,45 @@ class BMFontWriter {
         var imageName = path.basename(_file, path.extname(_file)) + ".png";
         var imagePathName = path.join(path.dirname(_file), imageName);
 
-        var x = 0;
-        var y = 0;
-        var w = 0;
-        var h = 0;
+        var config = {
+            x: 0,
+            y: 0,
+            w: 0,
+            max_h: this._charList[0].image.bitmap.height,
+            min_w: this._charList[0].image.bitmap.width,
+            lines: Array()
+        }
 
         for (var index = 0; index < this._charList.length; index++) {
             var element = this._charList[index];
             var bmp = element.image.bitmap;
 
-            var argumentList = Array();
-            argumentList.push("char");
-            argumentList.push("id="+element.char.charCodeAt(0));
-            argumentList.push("x="+x);
-            argumentList.push("y="+y);
-            argumentList.push("width="+bmp.width);
-            argumentList.push("height="+bmp.height);
-            argumentList.push("xoffset="+0);
-            argumentList.push("yoffset="+0);
-            argumentList.push("xadvance="+bmp.width);
-            argumentList.push("page="+0);
-            argumentList.push("chnl="+0);
-            argumentList.push("page="+0);
-            argumentList.push(String.format("letter=\"{0}\"",element.char.charAt(0)));
-
-            lines.push(argumentList.join(" "));
-
-            x = x + bmp.width;
-            h = Math.max(h, bmp.height);
-            w = w + bmp.width;
+            this._appendLine(config, bmp, element.char.charCodeAt(0), element.char);
         }
 
-        lines.splice(
+        var space = {width: config.min_w, height: config.max_h};
+        this._appendLine(config, space, " ".charCodeAt(0), "space");
+
+        config.lines.splice(
             0, 
             0,
             String.format("info face=\"{0}\" size={1} bold=0 italic=0 charset=\"\" unicode=0 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=2,2", this._font, this._fontSize),
-            String.format("common lineHeight={0} base={2} scaleW={1} scaleH={0} pages=1 packed=0", h, w, this._fontSize),
+            String.format("common lineHeight={0} base={2} scaleW={1} scaleH={0} pages=1 packed=0", config.max_h, config.w, this._fontSize),
             String.format("page id=0 file=\"{0}\"", imageName),
-            String.format("chars count={0}", this._charList.length)
+            String.format("chars count={0}", config.lines.length)
         )
 
-        fs.writeFileSync(_file, lines.join("\n"));
+        fs.writeFileSync(_file, config.lines.join("\n"));
 
-        x = 0;
-        y = 0;
-        var image = new Jimp(w, h, function (err, image) {
-            console.log(this);
+        config.x = 0;
+        config.y = 0;
+        var image = new Jimp(config.w, config.max_h, function (err, image) {
             for (var index = 0; index < this._charList.length; index++) {
                 var element = this._charList[index];
                 var bmp = element.image.bitmap;
 
-                image.composite(element.image, x, y);
-                x = x + bmp.width;
+                image.composite(element.image, config.x, config.y);
+                config.x = config.x + bmp.width;
             }            
             image.write(imagePathName);
         }.bind(this));
