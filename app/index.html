@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="css/bootstrap.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/app.css" crossorigin="anonymous">
+  <!--<title></title>-->
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="col-xs-12" style="height:20px;"></div>
+    <table class="table table-striped table-hover vertical-align header-fixed">
+      <thead>
+        <tr>
+          <th class="text-center">文件名</th>
+          <th class="text-center">图片</th>
+          <th class="text-center">尺寸</th>
+          <th class="text-center">字符</th>
+          <th class="text-center">操作</th>
+        </tr>
+      </thead>
+      <tbody id="item-list" class="style-4">
+      </tbody>
+    </table>
+    <div class="row">
+      <div class="col-xs-6 col-md-6">
+        <button class="btn btn-danger btn-block" type="button" , id="btn-clear">清空</button>
+      </div>
+      <div class="col-xs-6 col-md-6">
+        <button class="btn btn-success btn-block" type="button" , id="btn-save">保存</button>
+      </div>
+    </div>
+  </div>
+  <script src="js/index.js"></script>
+</body>
+
+</html>
