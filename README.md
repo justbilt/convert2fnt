@@ -1,4 +1,4 @@
-使用 Electron 重写了这个工具, 你可以在 [Release Page][1] 或者国内加速镜像 [Win][3] [MacOS][2] 下载.
+使用 Electron 重写了这个工具, 你可以在 [Release Page][1] 下载.
 
 预览:
 
